@@ -1,0 +1,23 @@
+diff --git a/hexdump.c b/hexdump.c
+--- ../hexdump1/hexdump.c	2018-11-28 22:43:05.434409800 +0900
++++ hexdump.c	2018-11-28 22:53:10.089581500 +0900
+@@ -5,6 +5,8 @@
+     unsigned char buff[17];
+     unsigned char *pc = (unsigned char*)addr;
+ 
++    printf("dump start\n");
++
+     // Output description if given.
+     if (desc != NULL)
+         printf ("%s:\n", desc);
+@@ -24,8 +26,9 @@
+ 
+         if ((i % 16) == 0) {
+             // Just don't print ASCII for the zeroth line.
+-            if (i != 0)
++            if (i != 0) {
+                 printf ("  %s\n", buff);
++            }
+ 
+             // Output the offset.
+             printf ("  %04x ", i);
