@@ -1,9 +1,6 @@
 package seecov.lib.coverage;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import java.io.File;
-import java.util.ArrayList;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,7 +8,6 @@ import org.junit.jupiter.api.Test;
 
 import seecov.lib.coverage.FileCoverageData;
 import seecov.lib.coverage.GCov;
-import seecov.lib.coverage.LineInformation;
 
 class GnuCoverageTest {
 

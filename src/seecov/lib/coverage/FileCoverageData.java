@@ -13,4 +13,8 @@ public class FileCoverageData {
 		this.sourceName = sourceName;
 		this.lineCoverage = lineCoverage;
 	}
+	
+	public boolean hasCoveredLines() {
+		return !lineCoverage.getLinesInformation().isEmpty();
+	}
 }

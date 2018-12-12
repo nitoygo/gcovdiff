@@ -7,7 +7,6 @@ import java.util.regex.Pattern;
 import seecov.lib.util.CustomFileReader;
 
 /** 
- * GCOV named longer for naming's sake
  * @brief Reads a raw gcov file, then parse it to be programmer-friendly
  */
 public class GCov extends Coverage {
@@ -21,16 +20,19 @@ public class GCov extends Coverage {
 	}
 	
 	@Override
-	public FileCoverageData getLineCoverage() throws Exception {
-		ArrayList<LineInformation> linesInformation = getLineCoverage(sourceFilename + gcovExtension);
-		
-		LineCoverage lineCoverage = new LineCoverage();
-		lineCoverage.setLinesInformation(linesInformation);
-		
+	public FileCoverageData getLineCoverage() {
 		FileCoverageData fileCoverageData = new FileCoverageData();
 		
-		fileCoverageData.sourceName = sourceFilename;
-		fileCoverageData.lineCoverage = lineCoverage;
+		try {
+			ArrayList<LineInformation> linesInformation = getLineCoverage(sourceFilename + gcovExtension);
+			LineCoverage lineCoverage = new LineCoverage();
+			lineCoverage.setLinesInformation(linesInformation);
+			
+			fileCoverageData.sourceName = sourceFilename;
+			fileCoverageData.lineCoverage = lineCoverage;
+		} catch (Exception e) {
+			System.out.println("No coverage for: " + sourceFilename);
+		}
 		
 		return fileCoverageData;
 	}
