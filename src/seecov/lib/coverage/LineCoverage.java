@@ -28,6 +28,14 @@ public class LineCoverage {
 		return lines;
 	}
 	
+	public LineInformation getLineInfoAt(int index) {
+		if (index < lines.size()) {
+			return lines.get(index);
+		}
+		
+		return new LineInformation(index, 0);
+	}
+	
 	public void setLinesInformation(ArrayList<LineInformation> lines) {
 		this.lines = lines;
 		

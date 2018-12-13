@@ -1,9 +1,7 @@
 package seecov.lib.output.html;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
@@ -11,156 +9,78 @@ import java.util.ArrayList;
 
 import seecov.lib.code.Source;
 import seecov.lib.coverage.FileCoverageData;
-import seecov.lib.coverage.GCov;
 import seecov.lib.output.ReportMaker;
-import seecov.lib.output.SourceOutputSummary;
-import seecov.lib.patch.Patch;
-import seecov.lib.patch.PatchFactory;
+import seecov.lib.output.FileSummary;
+import seecov.lib.output.ModuleSummary;
 import seecov.lib.patch.PatchInfo;
 import seecov.lib.util.CustomFileWriter;
 
-import seecov.lib.output.html.*;
 
-public class HtmlReportMaker implements ReportMaker {
-	public String outLocation;
-	public String srcLocation;
-	public String covLocation;
-	public String patchFile;
-	public int patchFormat;
-	
-	@Override
-	public void makeReport() throws Exception {
-		prepareOutputDirectory();
-		writeReport();
-	}
-	
-	private void prepareOutputDirectory() {
+public class HtmlReportMaker extends ReportMaker {
+
+	protected void prepareOutputDirectory() {
 		CustomFileWriter.createDirectory(outLocation);
 		
-		copyResource(getClass().getResourceAsStream("/seecov/lib/output/html/files/gcov.css"), outLocation + "gcov.css");
-		copyResource(getClass().getResourceAsStream("/seecov/lib/output/html/files/amber.png"), outLocation + "amber.png");
-		copyResource(getClass().getResourceAsStream("/seecov/lib/output/html/files/emerald.png"), outLocation + "emerald.png");
-		copyResource(getClass().getResourceAsStream("/seecov/lib/output/html/files/glass.png"), outLocation + "glass.png");
-		copyResource(getClass().getResourceAsStream("/seecov/lib/output/html/files/ruby.png"), outLocation + "ruby.png");
-		copyResource(getClass().getResourceAsStream("/seecov/lib/output/html/files/snow.png"), outLocation + "snow.png");
-		copyResource(getClass().getResourceAsStream("/seecov/lib/output/html/files/updown.png"), outLocation + "updown.png");
-	}
-	
-    public static void copyResource(InputStream source , String destination) {
-        try {
-            Files.copy(source, Paths.get(destination), StandardCopyOption.REPLACE_EXISTING);
-        } catch (IOException ex) {
-        }
-    }
-	
-	private void writeReport() throws Exception {
-		ArrayList<SourceOutputSummary> moduleSummary = createModuleSummary();
-		
-		for (SourceOutputSummary sourceSummary : moduleSummary) {
-			makeReportForFile(sourceSummary);
-		}
-		
-		makeReportForModule(moduleSummary);
-	}
-	
-	private ArrayList<SourceOutputSummary> createModuleSummary() throws Exception {
-		ArrayList<SourceOutputSummary> moduleSummary = new ArrayList<>();
-		
-		Patch patch = PatchFactory.CreatePatchContext(patchFile, patchFormat);
-		ArrayList<PatchInfo> allPatchInfo = patch.getAllPatchInfo();
-		
-		for (PatchInfo patchInfo : allPatchInfo) {
+		try {
 			
-			FileCoverageData coverageData = getCoverageForPatchedFile(patchInfo);
+			copyResource(getClass().getResourceAsStream("/seecov/lib/output/html/files/gcov.css"), outLocation + "gcov.css");
+			copyResource(getClass().getResourceAsStream("/seecov/lib/output/html/files/amber.png"), outLocation + "amber.png");
+			copyResource(getClass().getResourceAsStream("/seecov/lib/output/html/files/emerald.png"), outLocation + "emerald.png");
+			copyResource(getClass().getResourceAsStream("/seecov/lib/output/html/files/glass.png"), outLocation + "glass.png");
+			copyResource(getClass().getResourceAsStream("/seecov/lib/output/html/files/ruby.png"), outLocation + "ruby.png");
+			copyResource(getClass().getResourceAsStream("/seecov/lib/output/html/files/snow.png"), outLocation + "snow.png");
+			copyResource(getClass().getResourceAsStream("/seecov/lib/output/html/files/updown.png"), outLocation + "updown.png");
 			
-			if (coverageData.hasCoveredLines()) {
-				SourceOutputSummary sourceOut = new SourceOutputSummary();
-				
-				sourceOut.code = new Source(srcLocation + patchInfo.relativeFilename);
-				sourceOut.coverageData = coverageData;
-				sourceOut.patchInfo = patchInfo;
-				
-				sourceOut.summarize();
-				
-				moduleSummary.add(sourceOut);
-			}
+		} catch(Exception e) {
+			throw new RuntimeException("Could not copy files for html output to destination!");
 		}
-		
-		return moduleSummary;
 	}
 	
-	private FileCoverageData getCoverageForPatchedFile(PatchInfo patchInfo) {
-		return new GCov(covLocation + patchInfo.relativeFilename).getLineCoverage();
-	}
-	
-	private void makeReportForModule(ArrayList<SourceOutputSummary> moduleSummary) 
-	throws Exception {
+	@Override
+	protected void makeReportSummary(ModuleSummary moduleSummary) {
 		String outputName = outLocation + "index" + ".html";
 		
 		try (CustomFileWriter writer = new CustomFileWriter(outputName)) {
+			
 			writeSummaryHtml(writer, moduleSummary);
+			
+		} catch (Exception e) {
+			throw new RuntimeException("Failed to create report summary");
 		}
 	}
-	
-	private void makeReportForFile(SourceOutputSummary fileSummary) throws Exception {
+
+	@Override
+	protected void makeReportForFile(FileSummary fileSummary) {
 		String relativeName = fileSummary.patchInfo.relativeFilename;
 		String outputName = outLocation + relativeName + ".html";
 		
 		try (CustomFileWriter writer = new CustomFileWriter(outputName)) {
+			
 			writeSourceHtml(writer, fileSummary);
+			
+		} catch (Exception e) {
+			throw new RuntimeException("Failed to create report for: " + relativeName);
 		}
 	}
 	
-	private int getAllExecutableLines(ArrayList<SourceOutputSummary> moduleSummary) {
-		int count = 0;
-		
-		for (SourceOutputSummary sourceSummary : moduleSummary) {
-			count += sourceSummary.getAddedExecutableLines();
-		}
-		
-		return count;
+	private static void copyResource(InputStream source , String destination) throws IOException {
+		Files.copy(source, Paths.get(destination), StandardCopyOption.REPLACE_EXISTING);
 	}
-	
-	private int getAllExecutableLinesHit(ArrayList<SourceOutputSummary> moduleSummary) {
-		int count = 0;
-		
-		for (SourceOutputSummary sourceSummary : moduleSummary) {
-			count += sourceSummary.getAddedExecutableLinesHit();
-		}
-		
-		return count;
-	}
+
 	
 	
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	/*******************************************************************************
-	 * DON'T SCROLL DOWN ANYMORE. IT WILL HURT YOUR EYES!
-	 * ...
-	 * ...
-	 * ...
+	/*=====================================================================
 	 * 
-	 * TODO: FIX THIS SHIT!
-	 *******************************************************************************/
+	 * HTML code below
+	 * TODO: Needs some serious improvement
+	 * 
+	 *--------------------------------------------------------------------*/
 	
-	
-	private void writeSummaryHtml(CustomFileWriter writer, ArrayList<SourceOutputSummary> moduleSummary) 
+	private void writeSummaryHtml(CustomFileWriter writer, ModuleSummary moduleSummary) 
 	throws Exception {
-		int lines = getAllExecutableLines(moduleSummary);
-		int hit = getAllExecutableLinesHit(moduleSummary);
+		int lines = moduleSummary.getExecutableLines();
+		int hit = moduleSummary.getExecutableLinesHit();
 		int hitPercent = (int) ((lines != 0? ((double) hit / lines) : 0) * 100);
 		
 		writer.writeLine(
@@ -220,7 +140,7 @@ public class HtmlReportMaker implements ReportMaker {
 		writer.writeLine("</html>");
 	}
 
-	private void writeSummaryBody(CustomFileWriter writer, ArrayList<SourceOutputSummary> moduleSummary)
+	private void writeSummaryBody(CustomFileWriter writer, ModuleSummary moduleSummary)
 	throws Exception {
 		writer.writeLine(
 				"<center>" +
@@ -238,8 +158,9 @@ public class HtmlReportMaker implements ReportMaker {
 				"</tr>"
 			);
 		
-		for (SourceOutputSummary fileSummary : moduleSummary) {
-			writeSummaryEntry(writer, fileSummary);
+		int fileCount = moduleSummary.getFileCount();
+		for (int i = 0; i < fileCount; i++) {
+			writeSummaryEntry(writer, moduleSummary.getFileSummaryAt(i));
 		}
 		
 		writer.writeLine (
@@ -249,7 +170,7 @@ public class HtmlReportMaker implements ReportMaker {
 		
 	}
 	
-	private void writeSummaryEntry(CustomFileWriter writer, SourceOutputSummary fileSummary)
+	private void writeSummaryEntry(CustomFileWriter writer, FileSummary fileSummary)
 	throws Exception {
 		String sourceName = fileSummary.patchInfo.relativeFilename;
 		String sourceLink = sourceName + ".html";
@@ -297,7 +218,7 @@ public class HtmlReportMaker implements ReportMaker {
 			);
 	}
 
-	private void writeSummaryFooter(CustomFileWriter writer, ArrayList<SourceOutputSummary> moduleSummary)
+	private void writeSummaryFooter(CustomFileWriter writer, ModuleSummary moduleSummary)
 	throws Exception {
 		writer.writeLine (
 				"<br>" +
@@ -309,7 +230,7 @@ public class HtmlReportMaker implements ReportMaker {
 			);
 	}
 	
-	private void writeSourceBody(CustomFileWriter writer, SourceOutputSummary fileSummary)
+	private void writeSourceBody(CustomFileWriter writer, FileSummary fileSummary)
 	throws Exception {
 		Source code = fileSummary.code;
 		PatchInfo patchInfo = fileSummary.patchInfo;
@@ -330,8 +251,8 @@ public class HtmlReportMaker implements ReportMaker {
 		codeLines = code.getLines();
 		
 		for (int index = 0; index < codeLines.size(); index++) {
-			int hitCount = -1;			
-			hitCount = coverageData.lineCoverage.getLinesInformation().get(index).timesExecuted;
+			int hitCount = -1;
+			hitCount = coverageData.lineCoverage.getLineInfoAt(index).timesExecuted;
 			
 			String format = "";
 			
@@ -364,7 +285,7 @@ public class HtmlReportMaker implements ReportMaker {
 			);
 	}
 
-	private void writeSourceFooter(CustomFileWriter writer, SourceOutputSummary fileSummary)
+	private void writeSourceFooter(CustomFileWriter writer, FileSummary fileSummary)
 	throws Exception {
 		writer.writeLine(
 				"<br>" +
@@ -388,9 +309,8 @@ public class HtmlReportMaker implements ReportMaker {
 		return cssLocation;
 	}
 	
-	private void writeSourceHtml(CustomFileWriter writer, SourceOutputSummary fileSummary)
+	private void writeSourceHtml(CustomFileWriter writer, FileSummary fileSummary)
 	throws Exception {
-		Source code = fileSummary.code;
 		PatchInfo patchInfo = fileSummary.patchInfo;
 		
 		String css = getCssLocation(patchInfo.relativeFilename);
@@ -451,5 +371,6 @@ public class HtmlReportMaker implements ReportMaker {
 		writer.writeLine("</body>");
 		writer.writeLine("</html>");
 	}
+
 	
 }

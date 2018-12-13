@@ -43,17 +43,20 @@ public final class GitPatch extends Patch {
 	/**
 	 * @brief Generate a summary from the patch file
 	 */
-	public ArrayList<PatchInfo> getAllPatchInfo()  throws Exception {
+	public ArrayList<PatchInfo> getAllPatchInfo() {
 		ArrayList<PatchInfo> allSummary = new ArrayList<>();
-		CustomFileReader reader = new CustomFileReader(patchFilename);
-		String sourceFname;
+		String sourceFname = "";
 		
-		while (!(sourceFname = getNextFileMarker(reader)).isEmpty()) {
-			PatchInfo fileSummary = getSummaryForFile(reader, sourceFname);
-			allSummary.add(fileSummary);
+		try (CustomFileReader reader = new CustomFileReader(patchFilename)) {
+			
+			while (!(sourceFname = getNextFileMarker(reader)).isEmpty()) {
+				PatchInfo fileSummary = getSummaryForFile(reader, sourceFname);
+				allSummary.add(fileSummary);
+			}
+			
+		} catch (Exception e) {
+			System.out.println("Error while reading " + patchFilename + ". Recent file: " + sourceFname);
 		}
-		
-		reader.close();
 		
 		return allSummary;
 	}
@@ -146,20 +149,22 @@ public final class GitPatch extends Patch {
 		String markerNew = chunkHeader.substring(chunkHeader.indexOf('+'));
 		
 		String[] relativeInfo = markerNew.split(",");
-		int startLineNum = Integer.parseInt(relativeInfo[0]);
+		int currentLine = 1;
 		
-		int line = startLineNum;
+		try {
+			currentLine = Integer.parseInt(relativeInfo[0]);
+		} catch (Exception e) {}
 		
 		while (peekedLineIsCode(reader)) {
 			String lineStr = reader.getNextLine();
 			
 			if (isAdded(lineStr)) {
-				modifiedLines.add(line);
+				modifiedLines.add(currentLine);
 			} else if (isDeleted(lineStr)) {
-				line--;
+				currentLine--;
 			}
 			
-			line++;
+			currentLine++;
 		}
 	
 		return modifiedLines;

@@ -8,7 +8,7 @@ import seecov.lib.coverage.LineCoverage;
 import seecov.lib.coverage.LineInformation;
 import seecov.lib.patch.PatchInfo;
 
-public class SourceOutputSummary {
+public class FileSummary {
 
 	public Source code;
 	public FileCoverageData coverageData;
@@ -17,13 +17,13 @@ public class SourceOutputSummary {
 	private int lineCount;
 	private int hitCount;
 	
-	public SourceOutputSummary() {
+	public FileSummary() {
 		this.code = new Source();
 		this.coverageData = new FileCoverageData();
 		this.patchInfo = new PatchInfo();
 	}
 	
-	public SourceOutputSummary (Source code, FileCoverageData coverageData, PatchInfo patchInfo) {
+	public FileSummary (Source code, FileCoverageData coverageData, PatchInfo patchInfo) {
 		this.code = code;
 		this.coverageData = coverageData;
 		this.patchInfo = patchInfo;
@@ -41,7 +41,6 @@ public class SourceOutputSummary {
 	public int getAddedExecutableLinesHit() {
 		return hitCount;
 	}
-	
 
 	private void countAddedExecutableLines() {
 		LineCoverage coverage = coverageData.lineCoverage;
@@ -70,6 +69,5 @@ public class SourceOutputSummary {
 			}
 		}
 	}
-	
 	
 }
