@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import seecov.lib.util.CustomFileReader;
+import seecov.lib.util.file.CustomFileReader;
 
 /** 
  * @brief A Class for reading a git formatted patch

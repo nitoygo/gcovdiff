@@ -1,4 +1,4 @@
-package seecov.lib.output;
+package seecov.lib.output.core;
 
 import java.util.ArrayList;
 

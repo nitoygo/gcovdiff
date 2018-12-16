@@ -1,12 +1,12 @@
-package seecov.lib.output;
+package seecov.lib.output.core;
 
 import java.util.ArrayList;
 
 import seecov.lib.code.Source;
-import seecov.lib.coverage.FileCoverageData;
-import seecov.lib.coverage.GCov;
-import seecov.lib.output.ReportMaker;
-import seecov.lib.output.FileSummary;
+import seecov.lib.coverage.core.FileCoverageData;
+import seecov.lib.coverage.gnu.GCov;
+import seecov.lib.output.core.FileSummary;
+import seecov.lib.output.core.ReportMaker;
 import seecov.lib.patch.Patch;
 import seecov.lib.patch.PatchFactory;
 import seecov.lib.patch.PatchInfo;

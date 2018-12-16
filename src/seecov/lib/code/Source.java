@@ -2,7 +2,7 @@ package seecov.lib.code;
 
 import java.util.ArrayList;
 
-import seecov.lib.util.CustomFileReader;
+import seecov.lib.util.file.CustomFileReader;
 
 public class Source {
 	

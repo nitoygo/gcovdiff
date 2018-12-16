@@ -1,11 +1,11 @@
-package seecov.lib.output;
+package seecov.lib.output.core;
 
 import java.util.ArrayList;
 
 import seecov.lib.code.Source;
-import seecov.lib.coverage.FileCoverageData;
-import seecov.lib.coverage.LineCoverage;
-import seecov.lib.coverage.LineInformation;
+import seecov.lib.coverage.core.FileCoverageData;
+import seecov.lib.coverage.core.LineCoverage;
+import seecov.lib.coverage.core.LineInformation;
 import seecov.lib.patch.PatchInfo;
 
 public class FileSummary {
@@ -41,7 +41,7 @@ public class FileSummary {
 	public int getAddedExecutableLinesHit() {
 		return hitCount;
 	}
-
+	
 	private void countAddedExecutableLines() {
 		LineCoverage coverage = coverageData.lineCoverage;
 		ArrayList<LineInformation> linesList = coverage.getLinesInformation();

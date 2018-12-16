@@ -1,10 +1,14 @@
-package seecov.lib.coverage;
+package seecov.lib.coverage.gnu;
 
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import seecov.lib.util.CustomFileReader;
+import seecov.lib.coverage.core.Coverage;
+import seecov.lib.coverage.core.FileCoverageData;
+import seecov.lib.coverage.core.LineCoverage;
+import seecov.lib.coverage.core.LineInformation;
+import seecov.lib.util.file.CustomFileReader;
 
 /** 
  * @brief Reads a raw gcov file, then parse it to be programmer-friendly

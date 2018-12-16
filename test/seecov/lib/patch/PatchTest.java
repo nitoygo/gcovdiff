@@ -24,7 +24,7 @@ class PatchTest {
 	}
 
 	@Test
-	void testGitPatch() throws Exception {
+	void testModifiedFileGitPatch() throws Exception {
 		String currentPath = new File(".").getAbsolutePath();
 		String patchPath = currentPath + "\\test\\seecov\\lib\\testdata\\hexdump.diff";
 		
@@ -38,7 +38,19 @@ class PatchTest {
 			assertTrue(summary.modifiedLines.size() != 0);
 		}
 	}
-
+	
+	@Test
+	void testNewFileGitPatch() throws Exception {
+		String currentPath = new File(".").getAbsolutePath();
+		String patchPath = currentPath + "\\test\\seecov\\lib\\testdata\\java-code-git.diff";
+		
+		Patch patch = PatchFactory.CreatePatchContext(patchPath, Patch.PATCH_TYPE_UNIFIED_GIT);
+		ArrayList<PatchInfo> allSummary = patch.getAllPatchInfo();
+		
+		assertEquals(allSummary.size(), 1);
+		assertEquals(allSummary.get(0).modifiedLines.size(), 44);
+	}
+	
 	@Test
 	void testUnknownPatch() throws Exception {
 		String currentPath = new File(".").getAbsolutePath();
@@ -46,11 +58,5 @@ class PatchTest {
 		
 		Patch patch = PatchFactory.CreatePatchContext(patchPath, 0xb00b);
 		assertEquals(null, patch);
-	}
-	
-	@Test
-	void testPatchFactoryConstructor() throws Exception {		
-		PatchFactory factory = new PatchFactory();
-		assertNotNull(factory);
 	}
 }

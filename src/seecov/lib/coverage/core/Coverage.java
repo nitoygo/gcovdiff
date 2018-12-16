@@ -1,4 +1,4 @@
-package seecov.lib.coverage;
+package seecov.lib.coverage.core;
 
 public abstract class Coverage implements LineAnalyzer {
 	

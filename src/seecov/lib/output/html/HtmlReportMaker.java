@@ -8,32 +8,19 @@ import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 
 import seecov.lib.code.Source;
-import seecov.lib.coverage.FileCoverageData;
-import seecov.lib.output.ReportMaker;
-import seecov.lib.output.FileSummary;
-import seecov.lib.output.ModuleSummary;
+import seecov.lib.coverage.core.FileCoverageData;
+import seecov.lib.output.core.FileSummary;
+import seecov.lib.output.core.ModuleSummary;
+import seecov.lib.output.core.ReportMaker;
 import seecov.lib.patch.PatchInfo;
-import seecov.lib.util.CustomFileWriter;
+import seecov.lib.util.file.CustomFileWriter;
 
 
 public class HtmlReportMaker extends ReportMaker {
 
 	protected void prepareOutputDirectory() {
 		CustomFileWriter.createDirectory(outLocation);
-		
-		try {
-			
-			copyResource(getClass().getResourceAsStream("/seecov/lib/output/html/files/gcov.css"), outLocation + "gcov.css");
-			copyResource(getClass().getResourceAsStream("/seecov/lib/output/html/files/amber.png"), outLocation + "amber.png");
-			copyResource(getClass().getResourceAsStream("/seecov/lib/output/html/files/emerald.png"), outLocation + "emerald.png");
-			copyResource(getClass().getResourceAsStream("/seecov/lib/output/html/files/glass.png"), outLocation + "glass.png");
-			copyResource(getClass().getResourceAsStream("/seecov/lib/output/html/files/ruby.png"), outLocation + "ruby.png");
-			copyResource(getClass().getResourceAsStream("/seecov/lib/output/html/files/snow.png"), outLocation + "snow.png");
-			copyResource(getClass().getResourceAsStream("/seecov/lib/output/html/files/updown.png"), outLocation + "updown.png");
-			
-		} catch(Exception e) {
-			throw new RuntimeException("Could not copy files for html output to destination!");
-		}
+		copyResourcesToOutputDirectory();
 	}
 	
 	@Override
@@ -60,6 +47,22 @@ public class HtmlReportMaker extends ReportMaker {
 			
 		} catch (Exception e) {
 			throw new RuntimeException("Failed to create report for: " + relativeName);
+		}
+	}
+	
+	private void copyResourcesToOutputDirectory() {
+		try {
+			
+			copyResource(getClass().getResourceAsStream("/seecov/lib/output/html/resources/gcov.css"), outLocation + "gcov.css");
+			copyResource(getClass().getResourceAsStream("/seecov/lib/output/html/resources/amber.png"), outLocation + "amber.png");
+			copyResource(getClass().getResourceAsStream("/seecov/lib/output/html/resources/emerald.png"), outLocation + "emerald.png");
+			copyResource(getClass().getResourceAsStream("/seecov/lib/output/html/resources/glass.png"), outLocation + "glass.png");
+			copyResource(getClass().getResourceAsStream("/seecov/lib/output/html/resources/ruby.png"), outLocation + "ruby.png");
+			copyResource(getClass().getResourceAsStream("/seecov/lib/output/html/resources/snow.png"), outLocation + "snow.png");
+			copyResource(getClass().getResourceAsStream("/seecov/lib/output/html/resources/updown.png"), outLocation + "updown.png");
+			
+		} catch(Exception e) {
+			throw new RuntimeException("Could not copy files for html output to destination!");
 		}
 	}
 	

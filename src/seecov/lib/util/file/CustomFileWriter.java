@@ -1,9 +1,11 @@
-package seecov.lib.util;
+package seecov.lib.util.file;
 
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 
 public class CustomFileWriter implements AutoCloseable {
@@ -19,7 +21,12 @@ public class CustomFileWriter implements AutoCloseable {
 		createDirectory(Paths.get(filepath).getParent().toString());
 		
 		// then open buffer
-		writer = new BufferedWriter(new FileWriter(filepath));
+		writer = new BufferedWriter(
+					new OutputStreamWriter(
+						new FileOutputStream(filepath), 
+						StandardCharsets.UTF_8
+					)
+				);
 	}
 	
 	public void writeLine(String buffer) throws Exception {

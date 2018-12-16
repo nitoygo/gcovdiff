@@ -1,4 +1,4 @@
-package seecov.lib.coverage;
+package seecov.lib.coverage.core;
 
 import java.util.ArrayList;
 

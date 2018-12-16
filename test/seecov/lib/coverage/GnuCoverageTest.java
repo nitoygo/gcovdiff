@@ -6,8 +6,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import seecov.lib.coverage.FileCoverageData;
-import seecov.lib.coverage.GCov;
+import seecov.lib.coverage.core.FileCoverageData;
+import seecov.lib.coverage.gnu.GCov;
 
 class GnuCoverageTest {
 
